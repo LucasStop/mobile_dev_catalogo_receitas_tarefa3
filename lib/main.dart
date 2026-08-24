@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'receita_model.dart';
+import 'detalhes_receita_screen.dart';
 
 final List<Receita> DADOS_RECEITAS = [
   Receita(
@@ -88,6 +89,14 @@ class ListaReceitasScreen extends StatelessWidget {
               ),
               title: Text(receita.titulo),
               subtitle: const Text('Clique para ver detalhes'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetalhesReceitaScreen(receita: receita),
+                  ),
+                );
+              },
             ),
           );
         },
