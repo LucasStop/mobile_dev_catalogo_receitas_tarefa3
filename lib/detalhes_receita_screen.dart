@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'receita_model.dart';
 import 'favoritas_provider.dart';
+import 'theme.dart';
 
 class DetalhesReceitaScreen extends StatelessWidget {
   final Receita receita;
@@ -14,45 +15,133 @@ class DetalhesReceitaScreen extends StatelessWidget {
     final isFav = favoritasProvider.isFavorita(receita.id);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(receita.titulo),
-        actions: [
-          IconButton(
-            icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
-            onPressed: () {
-              context.read<FavoritasProvider>().toggleFavorita(receita.id);
-            },
+      body: Stack(
+        children: [
+          Image.network(
+            receita.imageUrl,
+            height: 320,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => Container(
+              height: 320,
+              color: Colors.grey.shade300,
+              child: const Icon(Icons.restaurant, size: 48),
+            ),
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                receita.imageUrl,
-                height: 220,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => Container(
-                  height: 220,
-                  color: Colors.grey.shade300,
-                  child: const Icon(Icons.restaurant, size: 48),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _BotaoCircular(
+                    icon: Icons.arrow_back,
+                    tooltip: 'Back',
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  _BotaoCircular(
+                    icon: isFav ? Icons.favorite : Icons.favorite_border,
+                    iconColor: isFav ? Colors.red : Colors.black87,
+                    onPressed: () {
+                      context.read<FavoritasProvider>().toggleFavorita(receita.id);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 280,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      receita.titulo,
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 20),
+                    _Secao(
+                      icone: Icons.shopping_basket_outlined,
+                      titulo: 'Ingredientes',
+                      texto: receita.ingredientes,
+                    ),
+                    const SizedBox(height: 20),
+                    _Secao(
+                      icone: Icons.soup_kitchen_outlined,
+                      titulo: 'Modo de Preparo',
+                      texto: receita.modoDePreparo,
+                    ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            Text('Ingredientes', style: Theme.of(context).textTheme.titleLarge),
-            Text(receita.ingredientes),
-            const SizedBox(height: 20),
-            Text('Modo de Preparo', style: Theme.of(context).textTheme.titleLarge),
-            Text(receita.modoDePreparo),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BotaoCircular extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String? tooltip;
+  final VoidCallback onPressed;
+
+  const _BotaoCircular({
+    required this.icon,
+    this.iconColor = Colors.black87,
+    this.tooltip,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      shape: const CircleBorder(),
+      elevation: 2,
+      child: IconButton(
+        icon: Icon(icon, color: iconColor),
+        tooltip: tooltip,
+        onPressed: onPressed,
+      ),
+    );
+  }
+}
+
+class _Secao extends StatelessWidget {
+  final IconData icone;
+  final String titulo;
+  final String texto;
+
+  const _Secao({required this.icone, required this.titulo, required this.texto});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icone, color: corDestaque, size: 20),
+            const SizedBox(width: 8),
+            Text(titulo, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
           ],
         ),
-      ),
+        const SizedBox(height: 8),
+        Text(texto, style: TextStyle(fontSize: 14, color: Colors.grey.shade700, height: 1.5)),
+      ],
     );
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'main.dart';
-import 'detalhes_receita_screen.dart';
 import 'favoritas_provider.dart';
+import 'recipe_card.dart';
 
 class FavoritasScreen extends StatelessWidget {
   const FavoritasScreen({super.key});
@@ -19,34 +19,23 @@ class FavoritasScreen extends StatelessWidget {
         title: const Text('Receitas Favoritas'),
       ),
       body: receitasFavoritas.isEmpty
-          ? const Center(
-              child: Text('Você ainda não tem receitas favoritas.'),
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.favorite_border, size: 48, color: Colors.grey.shade400),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Você ainda não tem receitas favoritas.',
+                    style: TextStyle(color: Colors.grey.shade600),
+                  ),
+                ],
+              ),
             )
           : ListView.builder(
+              padding: const EdgeInsets.only(top: 8, bottom: 16),
               itemCount: receitasFavoritas.length,
-              itemBuilder: (ctx, index) {
-                final receita = receitasFavoritas[index];
-                return Card(
-                  margin: const EdgeInsets.all(10),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(receita.imageUrl),
-                      onBackgroundImageError: (_, _) {},
-                      child: Text(receita.id.toUpperCase()),
-                    ),
-                    title: Text(receita.titulo),
-                    trailing: const Icon(Icons.favorite, color: Colors.red),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetalhesReceitaScreen(receita: receita),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
+              itemBuilder: (ctx, index) => RecipeCard(receita: receitasFavoritas[index]),
             ),
     );
   }

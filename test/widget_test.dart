@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:mobile_dev_catalogo_receitas_tarefa3/main.dart';
 import 'package:mobile_dev_catalogo_receitas_tarefa3/favoritas_provider.dart';
+import 'package:mobile_dev_catalogo_receitas_tarefa3/recipe_card.dart';
 
 Widget pumpApp() {
   return ChangeNotifierProvider(
@@ -44,7 +45,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final coracaoNaLista = find.descendant(
-      of: find.widgetWithText(ListTile, 'Bolo de Chocolate'),
+      of: find.ancestor(of: find.text('Bolo de Chocolate'), matching: find.byType(RecipeCard)),
       matching: find.byIcon(Icons.favorite),
     );
     expect(coracaoNaLista, findsOneWidget);

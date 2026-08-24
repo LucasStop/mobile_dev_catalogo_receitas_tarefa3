@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'receita_model.dart';
-import 'detalhes_receita_screen.dart';
 import 'favoritas_provider.dart';
 import 'favoritas_screen.dart';
+import 'recipe_card.dart';
+import 'theme.dart';
 
 final List<Receita> DADOS_RECEITAS = [
   Receita(
@@ -69,6 +70,22 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Catálogo de Receitas',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: corDestaque),
+        scaffoldBackgroundColor: const Color(0xFFF9F9F9),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.black87,
+          elevation: 0,
+          centerTitle: false,
+          titleTextStyle: TextStyle(
+            color: Colors.black87,
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
       home: const ListaReceitasScreen(),
     );
   }
@@ -95,39 +112,9 @@ class ListaReceitasScreen extends StatelessWidget {
         ],
       ),
       body: ListView.builder(
+        padding: const EdgeInsets.only(top: 8, bottom: 16),
         itemCount: DADOS_RECEITAS.length,
-        itemBuilder: (ctx, index) {
-          final receita = DADOS_RECEITAS[index];
-          return Card(
-            margin: const EdgeInsets.all(10),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(receita.imageUrl),
-                onBackgroundImageError: (_, _) {},
-                child: Text(receita.id.toUpperCase()),
-              ),
-              title: Text(receita.titulo),
-              subtitle: const Text('Clique para ver detalhes'),
-              trailing: Consumer<FavoritasProvider>(
-                builder: (ctx, favoritasProvider, child) {
-                  final isFav = favoritasProvider.isFavorita(receita.id);
-                  return Icon(
-                    isFav ? Icons.favorite : Icons.favorite_border,
-                    color: Colors.red,
-                  );
-                },
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetalhesReceitaScreen(receita: receita),
-                  ),
-                );
-              },
-            ),
-          );
-        },
+        itemBuilder: (ctx, index) => RecipeCard(receita: DADOS_RECEITAS[index]),
       ),
     );
   }
