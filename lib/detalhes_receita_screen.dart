@@ -34,7 +34,7 @@ class DetalhesReceitaScreen extends StatelessWidget {
                 SafeArea(
                   bottom: false,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -123,6 +123,8 @@ class _BotaoCircular extends StatelessWidget {
         icon: Icon(icon, color: iconColor),
         tooltip: tooltip,
         onPressed: onPressed,
+        padding: const EdgeInsets.all(10),
+        constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
       ),
     );
   }
