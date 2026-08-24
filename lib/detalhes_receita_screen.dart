@@ -15,73 +15,81 @@ class DetalhesReceitaScreen extends StatelessWidget {
     final isFav = favoritasProvider.isFavorita(receita.id);
 
     return Scaffold(
-      body: Stack(
+      body: Column(
         children: [
-          Image.network(
-            receita.imageUrl,
-            height: 320,
+          SizedBox(
+            height: 300,
             width: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => Container(
-              height: 320,
-              color: Colors.grey.shade300,
-              child: const Icon(Icons.restaurant, size: 48),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.network(
+                  receita.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => Container(
+                    color: Colors.grey.shade300,
+                    child: const Icon(Icons.restaurant, size: 48),
+                  ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _BotaoCircular(
+                          icon: Icons.arrow_back,
+                          tooltip: 'Back',
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        _BotaoCircular(
+                          icon: isFav ? Icons.favorite : Icons.favorite_border,
+                          iconColor: isFav ? Colors.red : Colors.black87,
+                          onPressed: () {
+                            context.read<FavoritasProvider>().toggleFavorita(receita.id);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _BotaoCircular(
-                    icon: Icons.arrow_back,
-                    tooltip: 'Back',
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  _BotaoCircular(
-                    icon: isFav ? Icons.favorite : Icons.favorite_border,
-                    iconColor: isFav ? Colors.red : Colors.black87,
-                    onPressed: () {
-                      context.read<FavoritasProvider>().toggleFavorita(receita.id);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 280,
-            left: 0,
-            right: 0,
-            bottom: 0,
+          Expanded(
             child: Container(
+              width: double.infinity,
+              transform: Matrix4.translationValues(0, -20, 0),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
               ),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      receita.titulo,
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
-                    ),
-                    const SizedBox(height: 20),
-                    _Secao(
-                      icone: Icons.shopping_basket_outlined,
-                      titulo: 'Ingredientes',
-                      texto: receita.ingredientes,
-                    ),
-                    const SizedBox(height: 20),
-                    _Secao(
-                      icone: Icons.soup_kitchen_outlined,
-                      titulo: 'Modo de Preparo',
-                      texto: receita.modoDePreparo,
-                    ),
-                  ],
+              child: SafeArea(
+                top: false,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        receita.titulo,
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 20),
+                      _Secao(
+                        icone: Icons.shopping_basket_outlined,
+                        titulo: 'Ingredientes',
+                        texto: receita.ingredientes,
+                      ),
+                      const SizedBox(height: 20),
+                      _Secao(
+                        icone: Icons.soup_kitchen_outlined,
+                        titulo: 'Modo de Preparo',
+                        texto: receita.modoDePreparo,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
