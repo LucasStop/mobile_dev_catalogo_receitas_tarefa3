@@ -1,30 +1,86 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 import 'package:mobile_dev_catalogo_receitas_tarefa3/main.dart';
+import 'package:mobile_dev_catalogo_receitas_tarefa3/favoritas_provider.dart';
+
+Widget pumpApp() {
+  return ChangeNotifierProvider(
+    create: (context) => FavoritasProvider(),
+    child: const MyApp(),
+  );
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('lista mostra as receitas mockadas', (tester) async {
+    await tester.pumpWidget(pumpApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Bolo de Chocolate'), findsOneWidget);
+    expect(find.text('Macarrão à Carbonara'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('tocar numa receita navega pra tela de detalhes', (tester) async {
+    await tester.pumpWidget(pumpApp());
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.tap(find.text('Bolo de Chocolate'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ingredientes'), findsOneWidget);
+    expect(find.text('Modo de Preparo'), findsOneWidget);
+  });
+
+  testWidgets('favoritar nos detalhes atualiza o ícone na lista', (tester) async {
+    await tester.pumpWidget(pumpApp());
+
+    await tester.tap(find.text('Bolo de Chocolate'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.favorite_border).last);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.favorite), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    final coracaoNaLista = find.descendant(
+      of: find.widgetWithText(ListTile, 'Bolo de Chocolate'),
+      matching: find.byIcon(Icons.favorite),
+    );
+    expect(coracaoNaLista, findsOneWidget);
+  });
+
+  testWidgets('tela de favoritos mostra mensagem quando vazia', (tester) async {
+    await tester.pumpWidget(pumpApp());
+
+    final botaoFavoritos = find.descendant(
+      of: find.byType(AppBar),
+      matching: find.byIcon(Icons.favorite),
+    );
+    await tester.tap(botaoFavoritos);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Você ainda não tem receitas favoritas.'), findsOneWidget);
+  });
+
+  testWidgets('tela de favoritos filtra só as receitas favoritadas', (tester) async {
+    await tester.pumpWidget(pumpApp());
+
+    await tester.tap(find.text('Bolo de Chocolate'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.favorite_border).last);
+    await tester.pumpAndSettle();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    final botaoFavoritos = find.descendant(
+      of: find.byType(AppBar),
+      matching: find.byIcon(Icons.favorite),
+    );
+    await tester.tap(botaoFavoritos);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Bolo de Chocolate'), findsOneWidget);
+    expect(find.text('Macarrão à Carbonara'), findsNothing);
   });
 }
