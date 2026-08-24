@@ -21,36 +21,50 @@ class DetalhesReceitaScreen extends StatelessWidget {
             height: 300,
             width: double.infinity,
             child: Stack(
-              fit: StackFit.expand,
               children: [
-                Image.network(
-                  receita.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => Container(
-                    color: Colors.grey.shade300,
-                    child: const Icon(Icons.restaurant, size: 48),
+                Positioned.fill(
+                  child: Image.network(
+                    receita.imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => Container(
+                      color: Colors.grey.shade300,
+                      child: const Icon(Icons.restaurant, size: 48),
+                    ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _BotaoCircular(
-                          icon: Icons.arrow_back,
-                          tooltip: 'Back',
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        _BotaoCircular(
-                          icon: isFav ? Icons.favorite : Icons.favorite_border,
-                          iconColor: isFav ? Colors.red : Colors.black87,
-                          onPressed: () {
-                            context.read<FavoritasProvider>().toggleFavorita(receita.id);
-                          },
-                        ),
-                      ],
+                Positioned(
+                  top: 0,
+                  left: 16,
+                  child: SafeArea(
+                    left: false,
+                    right: false,
+                    bottom: false,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: _BotaoCircular(
+                        icon: Icons.arrow_back,
+                        tooltip: 'Back',
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 16,
+                  child: SafeArea(
+                    left: false,
+                    right: false,
+                    bottom: false,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: _BotaoCircular(
+                        icon: isFav ? Icons.favorite : Icons.favorite_border,
+                        iconColor: isFav ? Colors.red : Colors.black87,
+                        onPressed: () {
+                          context.read<FavoritasProvider>().toggleFavorita(receita.id);
+                        },
+                      ),
                     ),
                   ),
                 ),
