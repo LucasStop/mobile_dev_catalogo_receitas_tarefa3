@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'receita_model.dart';
 import 'detalhes_receita_screen.dart';
 import 'favoritas_provider.dart';
+import 'favoritas_screen.dart';
 
 final List<Receita> DADOS_RECEITAS = [
   Receita(
@@ -81,6 +82,17 @@ class ListaReceitasScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Minhas Receitas'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FavoritasScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: DADOS_RECEITAS.length,
