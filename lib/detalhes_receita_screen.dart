@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'receita_model.dart';
+import 'favoritas_provider.dart';
 
 class DetalhesReceitaScreen extends StatelessWidget {
   final Receita receita;
@@ -8,9 +10,20 @@ class DetalhesReceitaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final favoritasProvider = context.watch<FavoritasProvider>();
+    final isFav = favoritasProvider.isFavorita(receita.id);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(receita.titulo),
+        actions: [
+          IconButton(
+            icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
+            onPressed: () {
+              context.read<FavoritasProvider>().toggleFavorita(receita.id);
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

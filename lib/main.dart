@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'receita_model.dart';
 import 'detalhes_receita_screen.dart';
+import 'favoritas_provider.dart';
 
 final List<Receita> DADOS_RECEITAS = [
   Receita(
@@ -51,7 +53,12 @@ final List<Receita> DADOS_RECEITAS = [
 ];
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => FavoritasProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -89,6 +96,15 @@ class ListaReceitasScreen extends StatelessWidget {
               ),
               title: Text(receita.titulo),
               subtitle: const Text('Clique para ver detalhes'),
+              trailing: Consumer<FavoritasProvider>(
+                builder: (ctx, favoritasProvider, child) {
+                  final isFav = favoritasProvider.isFavorita(receita.id);
+                  return Icon(
+                    isFav ? Icons.favorite : Icons.favorite_border,
+                    color: Colors.red,
+                  );
+                },
+              ),
               onTap: () {
                 Navigator.push(
                   context,
